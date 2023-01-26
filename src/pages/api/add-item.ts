@@ -6,8 +6,6 @@ const notion = new Client({ auth: process.env.NOTION_KEY })
 
 const databaseId = process.env.NOTION_DATABASE_ID
 
-console.log(databaseId)
-
 async function addItem(name: string) {
   try {
     const response = await notion.pages.create({
@@ -25,7 +23,6 @@ async function addItem(name: string) {
       },
     })
     console.log(response)
-    console.log('Success! Entry added.')
   } catch (error) {
     console.error(JSON.stringify(error))
   }

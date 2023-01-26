@@ -1,12 +1,19 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
-import { useRef } from 'react'
 
-const inter = Inter({ subsets: ['latin'] })
+import styles from '@/styles/Home.module.css'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
+  const [products, setProducts] = useState<{
+    id: string
+    properties: { id: string }[]
+  }>([])
+  useEffect(() => {
+    fetch('/api/get-items')
+      .then((res) => res.json())
+      .then((data) => setProducts(data.items))
+  }, [])
   const handleClick = () => {
     if (inputRef.current == null || inputRef.current.value == '') {
       alert('name을 넣어주세요.')
@@ -17,6 +24,7 @@ export default function Home() {
       .then((data) => alert(data.message))
   }
   const inputRef = useRef<HTMLInputElement>(null)
+
   return (
     <>
       <Head>
@@ -73,62 +81,34 @@ export default function Home() {
         </div>
 
         <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
+          <h2> Product List </h2>
+          <div>
+            {products &&
+              products.map((item) => (
+                <div key={item.id}>
+                  {JSON.stringify(item)}
+                  <p>
+                    {item.properties &&
+                      Object.entries(item.properties).map(([key, value]) => (
+                        <button
+                          key={key}
+                          onClick={() => {
+                            fetch(
+                              `/api/get-detail?pageId=${item.id}&propertyId=${value.id}`
+                            )
+                              .then((res) => res.json())
+                              .then((data) =>
+                                alert(JSON.stringify(data.detail))
+                              )
+                          }}
+                        >
+                          {key}
+                        </button>
+                      ))}
+                  </p>
+                </div>
+              ))}
+          </div>
         </div>
       </main>
     </>

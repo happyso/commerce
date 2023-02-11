@@ -1,29 +1,39 @@
 import Head from 'next/head'
-import Image from 'next/image'
 
 import styles from '@/styles/Home.module.css'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
+  // const [products, setProducts] = useState<{
+  //   id: string
+  //   properties: { id: string }[]
+  // }>([])
   const [products, setProducts] = useState<{
     id: string
-    properties: { id: string }[]
+    name: string
+    createAt: string
   }>([])
+  // useEffect(() => {
+  //   fetch('/api/get-items')
+  //     .then((res) => res.json())
+  //     .then((data) => setProducts(data.items))
+  // }, [])
+
   useEffect(() => {
-    fetch('/api/get-items')
+    fetch('/api/get-products')
       .then((res) => res.json())
       .then((data) => setProducts(data.items))
   }, [])
-  const handleClick = () => {
-    if (inputRef.current == null || inputRef.current.value == '') {
-      alert('name을 넣어주세요.')
-      return
-    }
-    fetch(`/api/add-item?name=${inputRef.current.value}`)
-      .then((res) => res.json())
-      .then((data) => alert(data.message))
-  }
-  const inputRef = useRef<HTMLInputElement>(null)
+  // const handleClick = () => {
+  //   if (inputRef.current == null || inputRef.current.value == '') {
+  //     alert('name을 넣어주세요.')
+  //     return
+  //   }
+  //   fetch(`/api/add-item?name=${inputRef.current.value}`)
+  //     .then((res) => res.json())
+  //     .then((data) => alert(data.message))
+  // }
+  // const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <>
@@ -33,56 +43,21 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-          <input ref={inputRef} type="text" placeholder="name" />
-          <button onClick={handleClick}>Add Jacket</button>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
         <div className={styles.grid}>
           <h2> Product List </h2>
           <div>
+            {products &&
+              products.map((item) => (
+                <div key={item.id}>
+                  {item.name}
+                  <p>{item.createAt}</p>
+                </div>
+              ))}
+          </div>
+
+          {/* <div>
             {products &&
               products.map((item) => (
                 <div key={item.id}>
@@ -108,7 +83,7 @@ export default function Home() {
                   </p>
                 </div>
               ))}
-          </div>
+          </div> */}
         </div>
       </main>
     </>
